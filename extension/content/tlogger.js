@@ -19,6 +19,8 @@
  *
  */
 
+console.log(Components.classes["@dubroy.com/tlogger/globals;1"].name);
+
 var com_dubroy_tlogger = function() {
 
 //----------------------------------------------------------------------------
@@ -326,6 +328,7 @@ function tryAttachSessionHistoryListener()
  */
 function window_onload() {
 	try {
+		console.log(Cc);
 		globals = Cc["@dubroy.com/tlogger/globals;1"].getService().wrappedJSObject;
 		registerWindow(window);
 		// Build a custom logging function that includes the window id in every event
@@ -957,7 +960,8 @@ function logTabClose(event)
 	} catch(ex) {
 		log_error("Exception removing listeners for tab " + getTabId(tab), ex);
 	}
-}
+}
+
 
 // These will store the original values of the two methods on the window
 // object that we want to override

@@ -23,7 +23,7 @@
 const CLASS_ID = Components.ID("{1044e410-477c-11dd-ae16-0800200c9a66}");
 
 // description
-const CLASS_NAME = "Global object for the tlogger extension";
+const CLASS_NAME = "TLoggerGlobals";
 
 // textual unique identifier
 const CONTRACT_ID = "@dubroy.com/tlogger/globals;1";
@@ -36,6 +36,9 @@ const Ci = Components.interfaces;
 
 // According to http://developer.mozilla.org/en/docs/Code_snippets:File_I/O#Writing_to_a_file
 const FILE_APPEND_MODE = 0x02 | 0x10; 
+
+Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
+
 
 /**
  * Class definition
@@ -70,14 +73,14 @@ function TLoggerGlobals() {
 	var firefoxMajorVersion = -1;
 	var appInfo = Cc["@mozilla.org/xre/app-info;1"].getService(Ci.nsIXULAppInfo);
 	var comp = Cc["@mozilla.org/xpcom/version-comparator;1"].getService(Ci.nsIVersionComparator);
-	if (comp.compare(appInfo.version, "3.0") >= 0) {
-		firefoxMajorVersion = 3;
-	} else if (comp.compare(appInfo.version, "2.0") >= 0) {
-		firefoxMajorVersion = 2;
-	} else {
-		Components.utils.reportError(new Error(
-			"Only Firefox 2.x and 3.x are supported"));
-	}
+	// if (comp.compare(appInfo.version, "3.0") >= 0) {
+	// 	firefoxMajorVersion = 3;
+	// } else if (comp.compare(appInfo.version, "2.0") >= 0) {
+	// 	firefoxMajorVersion = 2;
+	// } else {
+	// 	Components.utils.reportError(new Error(
+	// 		"Only Firefox 2.x and 3.x are supported"));
+	// }
 	
 	function getWindowId(win)
 	{
@@ -397,6 +400,21 @@ function TLoggerGlobals() {
 	this.searchStringTable = stringTable.search;
 };
 
+TLoggerGlobals.prototype = {
+  // properties required for XPCOM registration:
+  classDescription: CLASS_NAME,
+  classID:          CLASS_ID,
+  contractID:       CONTRACT_ID,
+
+
+  // QueryInterface implementation, e.g. using the generateQI helper
+  QueryInterface: XPCOMUtils.generateQI(
+    [Components.interfaces.nsIObserver,
+     Components.interfaces.nsIMyInterface,
+     "nsIFoo",
+     "nsIBar" ]),
+
+};
 
 /**
  * Class factory
@@ -420,6 +438,7 @@ var TLoggerGlobalsModule = {
 			QueryInterface(Ci.nsIComponentRegistrar);
 		aCompMgr.registerFactoryLocation(CLASS_ID, CLASS_NAME, 
 			CONTRACT_ID, aFileSpec, aLocation, aType);
+		console.log("registered");
 	},
 	
 	unregisterSelf: function(aCompMgr, aLocation, aType)
@@ -432,6 +451,7 @@ var TLoggerGlobalsModule = {
 	getClassObject: function(aCompMgr, aCID, aIID)
 	{
 		if (!aIID.equals(Ci.nsIFactory))
+
 			throw Components.results.NS_ERROR_NOT_IMPLEMENTED;
 		
 		if (aCID.equals(CLASS_ID))
@@ -443,9 +463,13 @@ var TLoggerGlobalsModule = {
 	canUnload: function(aCompMgr) { return true; }
 };
 
+
+
 /**
  * Module initialization
  * When the application registers the component, this function is called.
  */
 function NSGetModule(aCompMgr, aFileSpec) { return TLoggerGlobalsModule; }
 
+var components = [TLoggerGlobals];
+var NSGetFactory = XPCOMUtils.generateNSGetFactory(components);  
