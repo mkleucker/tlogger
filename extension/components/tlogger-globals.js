@@ -73,14 +73,6 @@ function TLoggerGlobals() {
 	var firefoxMajorVersion = -1;
 	var appInfo = Cc["@mozilla.org/xre/app-info;1"].getService(Ci.nsIXULAppInfo);
 	var comp = Cc["@mozilla.org/xpcom/version-comparator;1"].getService(Ci.nsIVersionComparator);
-	// if (comp.compare(appInfo.version, "3.0") >= 0) {
-	// 	firefoxMajorVersion = 3;
-	// } else if (comp.compare(appInfo.version, "2.0") >= 0) {
-	// 	firefoxMajorVersion = 2;
-	// } else {
-	// 	Components.utils.reportError(new Error(
-	// 		"Only Firefox 2.x and 3.x are supported"));
-	// }
 	
 	function getWindowId(win)
 	{
@@ -408,11 +400,11 @@ TLoggerGlobals.prototype = {
 
 
   // QueryInterface implementation, e.g. using the generateQI helper
-  QueryInterface: XPCOMUtils.generateQI(
-    [Components.interfaces.nsIObserver,
-     Components.interfaces.nsIMyInterface,
-     "nsIFoo",
-     "nsIBar" ]),
+  // QueryInterface: XPCOMUtils.generateQI(
+  //   [Components.interfaces.nsIObserver,
+  //    Components.interfaces.nsIMyInterface,
+  //    "nsIFoo",
+  //    "nsIBar" ]),
 
 };
 
@@ -471,5 +463,8 @@ var TLoggerGlobalsModule = {
  */
 function NSGetModule(aCompMgr, aFileSpec) { return TLoggerGlobalsModule; }
 
+/**
+ * Create Factory
+ */
 var components = [TLoggerGlobals];
 var NSGetFactory = XPCOMUtils.generateNSGetFactory(components);  
